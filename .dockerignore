@@ -1,0 +1,21 @@
+# Don't copy these into Docker image
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg-info/
+dist/
+build/
+
+# Data folders (we'll mount these as volumes)
+data/
+outputs/
+.ipynb_checkpoints/
+*.ipynb
+
+# Git and IDE
+.git/
+.vscode/
+.idea/
