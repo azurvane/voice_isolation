@@ -2,7 +2,7 @@ import numpy as np
 import soundfile as sf
 from pathlib import Path
 import random
-from typing import List, Tuple, Dict
+from typing import List, Dict
 from src.preprocessing.audio_utils import load_audio, get_audio_duration
 
 
@@ -107,7 +107,7 @@ def create_realistic_mixture(
     
     Args:
         speaker_audio_files: Dict mapping speaker_id -> list of audio file paths
-                           Example: {0: [spk1_file1.flac, spk1_file2.flac],
+                            Example: {0: [spk1_file1.flac, spk1_file2.flac],
                                     1: [spk2_file1.flac, spk2_file2.flac]}
         output_path: Where to save mixture
         target_duration: Desired total duration (seconds)
