@@ -5,7 +5,7 @@ import random
 import json
 from typing import List, Dict, Tuple
 from tqdm import tqdm
-from src.preprocessing.mixture_generator import create_realistic_mixture
+from src.preprocessing.generating_data.mixture_generator import create_realistic_mixture
 
 def collect_speaker_data(data_dir: Path, max_speakers: int) -> Dict[str, List[Path]]:
     """
