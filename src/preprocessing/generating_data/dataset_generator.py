@@ -82,9 +82,6 @@ def create_dataset_split(
        - Call create_realistic_mixture() - it handles EVERYTHING!
        - Save metadata to manifest
     3. Save manifest.json
-    
-    NOTE: You DON'T need to save clean sources - 
-    create_realistic_mixture() already does it!
     """
     
     # Create output directories
@@ -224,7 +221,7 @@ def generate_full_dataset(
         speaker_data=val_speakers,
         output_dir=output_dir / "val",
         split_name="val",
-        num_mixtures=train_size
+        num_mixtures=val_size
     )
     
     print("\n📊 Generating test set...")
@@ -233,7 +230,7 @@ def generate_full_dataset(
         speaker_data=test_speakers,
         output_dir=output_dir / "test",
         split_name="test",
-        num_mixtures=train_size
+        num_mixtures=test_size
     )
     
     # Save dataset statistics

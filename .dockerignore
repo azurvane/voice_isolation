@@ -1,4 +1,4 @@
-# Don't copy these into Docker image
+# Python
 __pycache__/
 *.pyc
 *.pyo
@@ -8,14 +8,41 @@ __pycache__/
 *.egg-info/
 dist/
 build/
+*.egg
 
-# Data folders (we'll mount these as volumes)
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Data (will be mounted as volumes)
 data/
 outputs/
+
+# Jupyter
 .ipynb_checkpoints/
 *.ipynb
 
-# Git and IDE
-.git/
+# IDEs
 .vscode/
 .idea/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Model checkpoints
+*.pt
+*.pth
+checkpoints/

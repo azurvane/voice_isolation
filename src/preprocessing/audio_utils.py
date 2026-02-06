@@ -20,7 +20,7 @@ def load_audio(file_path, sr_=16000):
     # TODO: Use librosa to load audio
     # Hint: librosa.load() function
     
-    audio, sr = librosa.load(file_path, sr=sr_)
+    audio, sr = librosa.load(file_path, sr=sr_, mono=True)
     
     return audio, sr
 
