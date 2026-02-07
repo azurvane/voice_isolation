@@ -21,3 +21,7 @@ torchaudio==2.1.0
 
 # Training utilities 
 tensorboard==2.15.1
+
+# jupyter notebook 
+jupyter==1.0.0
+notebook==7.0.6
