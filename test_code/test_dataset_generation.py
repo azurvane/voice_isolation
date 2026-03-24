@@ -4,7 +4,7 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.preprocessing.generating_data.dataset_generator import generate_full_dataset
+from src.generating_data.dataset_generator import generate_full_dataset
 
 # Generate small test dataset
 data_dir = project_root / "data" / "raw"
