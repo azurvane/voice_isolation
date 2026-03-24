@@ -5,7 +5,7 @@ import random
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.preprocessing.generating_data.mixture_generator import create_realistic_mixture, visualize_realistic_mixture
+from src.generating_data.mixture_generator import create_realistic_mixture, visualize_realistic_mixture
 
 # Collect audio files for 2-3 speakers
 data_dir = project_root / "data" / "raw"
