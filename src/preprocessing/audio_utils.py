@@ -1,9 +1,6 @@
 import librosa
-import soundfile as sf
 import numpy as np
 import matplotlib.pyplot as plt
-from pathlib import Path
-import pandas as pd
 
 def load_audio(file_path, sr_=16000):
     """
