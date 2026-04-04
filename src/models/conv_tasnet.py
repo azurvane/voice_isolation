@@ -54,7 +54,7 @@ class LayerNormConv1x1(nn.Module):
         return out
 
 
-class _TCN(nn.Module):
+class _TCNBlock(nn.Module):
     def __init__(
             self, 
             in_channels=128, 
@@ -96,7 +96,7 @@ class _TCN(nn.Module):
         return out+residual
 
 
-class TCNBlock(nn.Module):
+class TCNStack(nn.Module):
     def __init__(
             self,
             N: int = 512,    # encoder filters
@@ -115,14 +115,15 @@ class TCNBlock(nn.Module):
         
         for _ in range(self.num_repeats):
             for dilation in self.dilations:
-                self.tcnStack.append(_TCN(
+                self.tcnStack.append(_TCNBlock(
                     in_channels=self.Bottleneck, 
                     dilation=dilation
                     ))
     
     def forward(self, x):
+        out = x
         for tcn in self.tcnStack:
-            out = tcn(x)
+            out = tcn(out)
         
         return out
 
@@ -155,3 +156,24 @@ class NonLinearConv1x1(nn.Module):
         b, _, L = out.shape
         out = out.view(b, self.num_speakers, self.in_channels, L)
         return out
+
+
+class Decoder(nn.Module):
+    def __init__(
+            self,
+            num_filters=512, 
+            kernel_size=16, 
+            stride=8
+            ):
+        super().__init__()
+        
+        self.convTrans = nn.ConvTranspose1d(
+            in_channels=num_filters, 
+            out_channels=1, 
+            kernel_size=kernel_size,
+            stride=stride,
+            bias=False
+            )
+    
+    def forward(self, x):
+        return self.convTrans(x)
