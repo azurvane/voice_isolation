@@ -28,7 +28,33 @@ class Encoder(nn.Module):
         return x
 
 
-class TCN(nn.Module):
+class LayerNormConv1x1(nn.Module):
+    def __init__(
+            self,
+            N: int = 512,    # encoder filters
+            B: int = 128,    # bottleneck dimension
+            ):
+        super().__init__()
+        
+        self.in_channels = N
+        self.Bottleneck = B
+        
+        self.groupNorm = nn.GroupNorm(1, self.in_channels)
+        self.bottleneckCompression = nn.Conv1d(
+            in_channels=self.in_channels, 
+            out_channels=self.Bottleneck, 
+            kernel_size=1, 
+            bias = False
+            )
+    
+    def forward(self, x):
+        out = self.groupNorm(x)
+        out = self.bottleneckCompression(out)
+        
+        return out
+
+
+class _TCN(nn.Module):
     def __init__(
             self, 
             in_channels=128, 
@@ -70,26 +96,13 @@ class TCN(nn.Module):
         return out+residual
 
 
-
-'''
-    contains three parts 
-        LayerNorm 1x1 conv
-        TCN blocks 
-            just implemented the stacking of 8 layers to create 
-            a block and stack 3 block
-        1x1 conv Non Linear
-    
-    all three parts needs to be seperated as output of TCN blocks 
-    is needed in diarization branch
-'''
-class Separator(nn.Module):
+class TCNBlock(nn.Module):
     def __init__(
             self,
             N: int = 512,    # encoder filters
             B: int = 128,    # bottleneck dimension
             num_blocks = 8,  # dilations per repeat [1, 2, 4, 8, 16, 32, 64, 128]
             num_repeats = 3, # how many times to repeat the 8-block stack
-            num_speakers = 2 # number of masks to produce (C)
             ):
         super().__init__()
         
@@ -97,23 +110,36 @@ class Separator(nn.Module):
         self.Bottleneck = B
         self.dilations = [2**i for i in range(num_blocks)]
         self.num_repeats = num_repeats
-        self.num_speakers = num_speakers
         
-        self.groupNorm = nn.GroupNorm(1, self.in_channels)
-        self.bottleneckCompression = nn.Conv1d(
-            in_channels=self.in_channels, 
-            out_channels=self.Bottleneck, 
-            kernel_size=1, 
-            bias = False
-            )
         self.tcnStack = nn.ModuleList()
         
         for _ in range(self.num_repeats):
             for dilation in self.dilations:
-                self.tcnStack.append(TCN(
+                self.tcnStack.append(_TCN(
                     in_channels=self.Bottleneck, 
                     dilation=dilation
                     ))
+    
+    def forward(self, x):
+        for tcn in self.tcnStack:
+            out = tcn(out)
+        
+        return out
+
+
+
+class NonLinearConv1x1(nn.Module):
+    def __init__(
+            self,
+            N: int = 512,    # encoder filters
+            B: int = 128,    # bottleneck dimension
+            num_speakers = 2 # number of masks to produce (C)
+            ):
+        super().__init__()
+        
+        self.in_channels = N
+        self.Bottleneck = B
+        self.num_speakers = num_speakers
         
         self.bottleneckExpension = nn.Conv1d(
             in_channels=self.Bottleneck, 
@@ -124,15 +150,6 @@ class Separator(nn.Module):
         self.activation = nn.Sigmoid()
     
     def forward(self, x):
-        # LayerNorm 1x1 conv
-        out = self.groupNorm(x)
-        out = self.bottleneckCompression(out)
-        
-        # TCN blocks
-        for tcn in self.tcnStack:
-            out = tcn(out)
-        
-        # 1x1 conv Non Linear
         out = self.bottleneckExpension(out)
         out = self.activation(out)
         b, _, L = out.shape
