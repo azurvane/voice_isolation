@@ -122,7 +122,7 @@ class TCNBlock(nn.Module):
     
     def forward(self, x):
         for tcn in self.tcnStack:
-            out = tcn(out)
+            out = tcn(x)
         
         return out
 
@@ -150,7 +150,7 @@ class NonLinearConv1x1(nn.Module):
         self.activation = nn.Sigmoid()
     
     def forward(self, x):
-        out = self.bottleneckExpension(out)
+        out = self.bottleneckExpension(x)
         out = self.activation(out)
         b, _, L = out.shape
         out = out.view(b, self.num_speakers, self.in_channels, L)
