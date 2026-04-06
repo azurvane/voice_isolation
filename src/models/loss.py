@@ -34,7 +34,7 @@ def pit_loss(outputs, targets, train=True):
     loss_stack = torch.stack(loss_list, dim=0)
     min_loss = torch.min(loss_stack, dim=0).values
     
-    if train == True:
+    if train:
         return min_loss.mean()
     else:
         return min_loss
