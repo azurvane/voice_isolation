@@ -1,6 +1,5 @@
 from torch import nn
 import torch.nn.functional as F
-from .helper import _reshape
 
 
 class Encoder(nn.Module):
@@ -22,7 +21,6 @@ class Encoder(nn.Module):
         self.relu = nn.ReLU()
     
     def forward(self, x):
-        x = _reshape(x)
         x = self.conv1d(x)
         x = self.relu(x)
         return x
